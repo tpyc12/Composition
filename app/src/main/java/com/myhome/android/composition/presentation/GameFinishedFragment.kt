@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.myhome.android.composition.R
 import com.myhome.android.composition.databinding.FragmentGameFinishedBinding
 import com.myhome.android.composition.domain.entity.GameResult
 
@@ -39,8 +40,32 @@ class GameFinishedFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+        binding.emojiResult.setImageResource(getSmileResId())
+        binding.tvRequiredAnswers.text = String.format(
+            getString(R.string.min_count_of_right_answers),
+            gameResult.gameSettings.minCountOfRightAnswers)
+        binding.tvScoreAnswers.text = String.format(
+            getString(R.string.count_of_right_answers),
+            gameResult.countOfRightAnswers
+        )
+        binding.tvRequiredPercentage.text = String.format(
+            getString(R.string.min_percentage_of_right_answers),
+            gameResult.gameSettings.minPercentOfRightAnswers
+        )
+        binding.tvScorePercentage.text = String.format(
+            getString(R.string.percentage_of_right_answers),
+            getPercentOfRightAnswers()
+        )
         binding.buttonRetry.setOnClickListener {
             retryGame()
+        }
+    }
+
+    private fun getSmileResId(): Int{
+        return if (gameResult.winner) {
+            R.drawable.ic_baseline_mood_24
+        } else {
+            R.drawable.ic_baseline_mood_bad_24
         }
     }
 
@@ -60,6 +85,13 @@ class GameFinishedFragment : Fragment() {
             GameFragment.NAME,
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
+    }
+
+    private fun getPercentOfRightAnswers() = with(gameResult) {
+        if (countOfQuestions == 0){
+            0
+        }
+        ((countOfRightAnswers / countOfQuestions.toDouble()) * 100).toInt()
     }
 
     companion object {
