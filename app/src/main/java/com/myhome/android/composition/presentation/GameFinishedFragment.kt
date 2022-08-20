@@ -4,26 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.myhome.android.composition.R
 import com.myhome.android.composition.databinding.FragmentGameFinishedBinding
-import com.myhome.android.composition.domain.entity.GameResult
 
 class GameFinishedFragment : Fragment() {
 
-    private lateinit var gameResult: GameResult
+    private val args by navArgs<GameFinishedFragmentArgs>()
 
     private var _binding: FragmentGameFinishedBinding? = null
     private val binding: FragmentGameFinishedBinding
         get() = _binding ?: throw RuntimeException("FragmentGameFinishedBinding == null")
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        parseArgs()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,14 +31,15 @@ class GameFinishedFragment : Fragment() {
         binding.emojiResult.setImageResource(getSmileResId())
         binding.tvRequiredAnswers.text = String.format(
             getString(R.string.min_count_of_right_answers),
-            gameResult.gameSettings.minCountOfRightAnswers)
+            args.gameResult.gameSettings.minCountOfRightAnswers
+        )
         binding.tvScoreAnswers.text = String.format(
             getString(R.string.count_of_right_answers),
-            gameResult.countOfRightAnswers
+            args.gameResult.countOfRightAnswers
         )
         binding.tvRequiredPercentage.text = String.format(
             getString(R.string.min_percentage_of_right_answers),
-            gameResult.gameSettings.minPercentOfRightAnswers
+            args.gameResult.gameSettings.minPercentOfRightAnswers
         )
         binding.tvScorePercentage.text = String.format(
             getString(R.string.percentage_of_right_answers),
@@ -56,8 +50,8 @@ class GameFinishedFragment : Fragment() {
         }
     }
 
-    private fun getSmileResId(): Int{
-        return if (gameResult.winner) {
+    private fun getSmileResId(): Int {
+        return if (args.gameResult.winner) {
             R.drawable.ic_baseline_mood_24
         } else {
             R.drawable.ic_baseline_mood_bad_24
@@ -69,33 +63,14 @@ class GameFinishedFragment : Fragment() {
         _binding = null
     }
 
-    private fun parseArgs() {
-        requireArguments().getParcelable<GameResult>(KEY_GAME_RESULT)?.let {
-            gameResult = it
-        }
-    }
-
     private fun retryGame() {
         findNavController().popBackStack()
     }
 
-    private fun getPercentOfRightAnswers() = with(gameResult) {
-        if (countOfQuestions == 0){
+    private fun getPercentOfRightAnswers() = with(args.gameResult) {
+        if (countOfQuestions == 0) {
             0
         }
         ((countOfRightAnswers / countOfQuestions.toDouble()) * 100).toInt()
-    }
-
-    companion object {
-
-        const val KEY_GAME_RESULT = "game_result"
-
-        fun newInstance(gameResult: GameResult): GameFinishedFragment {
-            return GameFinishedFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(KEY_GAME_RESULT, gameResult)
-                }
-            }
-        }
     }
 }
