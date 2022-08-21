@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.myhome.android.composition.R
 import com.myhome.android.composition.databinding.FragmentGameFinishedBinding
 
 class GameFinishedFragment : Fragment() {
@@ -28,33 +27,13 @@ class GameFinishedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.emojiResult.setImageResource(getSmileResId())
-        binding.tvRequiredAnswers.text = String.format(
-            getString(R.string.min_count_of_right_answers),
-            args.gameResult.gameSettings.minCountOfRightAnswers
-        )
-        binding.tvScoreAnswers.text = String.format(
-            getString(R.string.count_of_right_answers),
-            args.gameResult.countOfRightAnswers
-        )
-        binding.tvRequiredPercentage.text = String.format(
-            getString(R.string.min_percentage_of_right_answers),
-            args.gameResult.gameSettings.minPercentOfRightAnswers
-        )
-        binding.tvScorePercentage.text = String.format(
-            getString(R.string.percentage_of_right_answers),
-            getPercentOfRightAnswers()
-        )
-        binding.buttonRetry.setOnClickListener {
-            retryGame()
-        }
+        binding.gameResult = args.gameResult
+        setupClickListener()
     }
 
-    private fun getSmileResId(): Int {
-        return if (args.gameResult.winner) {
-            R.drawable.ic_baseline_mood_24
-        } else {
-            R.drawable.ic_baseline_mood_bad_24
+    private fun setupClickListener() {
+        binding.buttonRetry.setOnClickListener {
+            retryGame()
         }
     }
 
@@ -65,12 +44,5 @@ class GameFinishedFragment : Fragment() {
 
     private fun retryGame() {
         findNavController().popBackStack()
-    }
-
-    private fun getPercentOfRightAnswers() = with(args.gameResult) {
-        if (countOfQuestions == 0) {
-            0
-        }
-        ((countOfRightAnswers / countOfQuestions.toDouble()) * 100).toInt()
     }
 }

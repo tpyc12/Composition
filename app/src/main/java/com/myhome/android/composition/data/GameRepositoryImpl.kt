@@ -4,8 +4,8 @@ import com.myhome.android.composition.domain.entity.GameSettings
 import com.myhome.android.composition.domain.entity.Level
 import com.myhome.android.composition.domain.entity.Question
 import com.myhome.android.composition.domain.repository.GameRepository
-import java.lang.Integer.max
-import java.lang.StrictMath.min
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 object GameRepositoryImpl : GameRepository {
@@ -58,7 +58,7 @@ object GameRepositoryImpl : GameRepository {
         options.add(rightAnswer)
         val from = max(rightAnswer - countOfOptions, MIN_ANSWER_VALUE)
         val to = min(maxSumValue, rightAnswer + countOfOptions)
-        while (options.size != countOfOptions) {
+        while (options.size < countOfOptions) {
             options.add(Random.nextInt(from, to))
         }
         return Question(sum, visibleNumber, options.toList())

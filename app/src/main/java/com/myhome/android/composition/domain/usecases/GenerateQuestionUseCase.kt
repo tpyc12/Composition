@@ -8,10 +8,10 @@ class GenerateQuestionUseCase(
 ) {
 
     operator fun invoke(maxSumValue: Int): Question {
-        return repository.generateQuestion(maxSumValue, COUNT_OF_ANSWERS)
+        return repository.generateQuestion(maxSumValue, COUNT_OF_OPTIONS)
     }
 
     private companion object {
-        private const val COUNT_OF_ANSWERS = 6
+        private const val COUNT_OF_OPTIONS = 6
     }
 }
